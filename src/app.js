@@ -1,6 +1,9 @@
+require('./db/mongoose')
 const express = require('express')
 const hbs = require('hbs')
 const path = require('path')
+
+const Task = require('./models/task')
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -14,9 +17,21 @@ app.set('views', viewsPath)
 hbs.registerPartials(partialPath)
 
 app.use(express.static(publicPath))
+app.use(express.json())
 
 app.get('/', (req, res) => {
-    res.send('Holas')
+    res.render('index')
+})
+
+app.post('/tasks', (req, res) => {
+    const task = new Task({
+        description: "programming"
+    })
+    task.save().then(() => {
+        res.send(task)
+    }).catch((e) => {
+        console.log(e)
+    })
 })
 
 app.listen(port, () => {
